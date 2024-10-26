@@ -5,131 +5,208 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TeraBox Player</title>
     <style>
+        :root {
+            --bg-color: #f0f2f5;
+            --container-bg: white;
+            --text-color: #333;
+            --input-border: #ccc;
+            --button-bg: #4CAF50;
+            --button-hover: #45a049;
+            --instructions-bg: #f8f8f8;
+            --instructions-border: #ddd;
+        }
+
+        [data-theme="dark"] {
+            --bg-color: #1a1a1a;
+            --container-bg: #2d2d2d;
+            --text-color: #ffffff;
+            --input-border: #444;
+            --button-bg: #2196F3;
+            --button-hover: #1976D2;
+            --instructions-bg: #363636;
+            --instructions-border: #444;
+        }
+
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f0f2f5;
+            background-color: var(--bg-color);
             margin: 0;
-            padding: 0;
+            padding: 20px;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
+            transition: all 0.3s ease;
         }
+
         .container {
-            background-color: white;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            padding: 2rem;
+            background-color: var(--container-bg);
+            border-radius: 12px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            padding: 2.5rem;
             width: 90%;
             max-width: 800px;
         }
+
         h1 {
-            color: #333;
+            color: var(--text-color);
             text-align: center;
-            margin-bottom: 1.5rem;
+            margin-bottom: 2rem;
+            font-size: 2.5rem;
         }
+
         .input-group {
             display: flex;
-            margin-bottom: 1.5rem;
+            margin-bottom: 2rem;
+            gap: 10px;
         }
+
         input[type="text"] {
             flex-grow: 1;
-            padding: 0.75rem;
-            border: 1px solid #ccc;
-            border-radius: 4px 0 0 4px;
+            padding: 1rem;
+            border: 2px solid var(--input-border);
+            border-radius: 8px;
             font-size: 1rem;
+            background-color: var(--container-bg);
+            color: var(--text-color);
+            transition: all 0.3s ease;
         }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: var(--button-bg);
+            box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.2);
+        }
+
         button {
-            padding: 0.75rem 1.5rem;
-            background-color: #4CAF50;
+            padding: 1rem 2rem;
+            background-color: var(--button-bg);
             color: white;
             border: none;
-            border-radius: 0 4px 4px 0;
+            border-radius: 8px;
             cursor: pointer;
             font-size: 1rem;
-            transition: background-color 0.3s ease;
+            font-weight: 600;
+            transition: all 0.3s ease;
         }
+
         button:hover {
-            background-color: #45a049;
+            background-color: var(--button-hover);
+            transform: translateY(-2px);
         }
+
         #player {
-            margin-top: 1.5rem;
-            border-radius: 8px;
+            margin-top: 2rem;
+            border-radius: 12px;
             overflow: hidden;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
         }
-        .button-group {
+
+        /* Theme toggle button */
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 10px;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
             display: flex;
-            justify-content: space-between;
-            margin-bottom: 1.5rem;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--container-bg);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
         }
-        .button-group button {
-            flex: 1;
-            margin: 0 0.5rem;
+
+        .theme-toggle i {
+            font-size: 1.2rem;
+            color: var(--text-color);
         }
-        .button-group button:first-child {
-            margin-left: 0;
+
+        /* Add these new styles */
+        .download-btn {
+            background-color: #ff4081;
         }
-        .button-group button:last-child {
-            margin-right: 0;
+        
+        .download-btn:hover {
+            background-color: #e91e63;
+        }
+
+        #downloadProgress {
+            margin-top: 1rem;
+            width: 100%;
+            height: 4px;
+            background-color: var(--input-border);
+            border-radius: 4px;
+            overflow: hidden;
+            display: none;
+        }
+
+        #downloadBar {
+            width: 0%;
+            height: 100%;
+            background-color: #ff4081;
+            transition: width 0.3s ease;
         }
     </style>
+    <!-- Add Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
+    <button class="theme-toggle" onclick="toggleTheme()">
+        <i class="fas fa-moon"></i>
+    </button>
+
     <div class="container">
         <h1>TeraBox Player</h1>
         <div class="input-group">
-            <input type="text" id="urlInput" placeholder="Enter URL">
-            <button onclick="loadPlayer()">Load Player</button>
+            <input type="text" id="urlInput" placeholder="Enter TeraBox URL here...">
+            <button onclick="loadPlayer()">
+                <i class="fas fa-play"></i> Load Player
+            </button>
+
         </div>
-        <div class="button-group">
-            <button onclick="downloadVideo()">Download Video</button>
-        </div>
+
         <div id="player"></div>
     </div>
 
     <script>
-        let currentVideoUrl = '';
-
         function loadPlayer() {
             const url = document.getElementById('urlInput').value;
             if (url) {
                 const playerUrl = `https://www.terabox.tech/play.html?url=${encodeURIComponent(url)}`;
-                document.getElementById('player').innerHTML = `<iframe id="playerFrame" src="${playerUrl}" width="100%" height="450" frameborder="0" allowfullscreen></iframe>`;
-                currentVideoUrl = url;
+                document.getElementById('player').innerHTML = `
+                    <iframe id="playerFrame" src="${playerUrl}" width="100%" height="450" frameborder="0" allowfullscreen></iframe>
+                    <div id="downloadProgress">
+                        <div id="downloadBar"></div>
+                    </div>
+                `;
             } else {
                 alert('Please enter a valid URL');
             }
         }
 
-        function downloadVideo() {
-            if (!currentVideoUrl) {
-                alert('Please load a video first');
-                return;
-            }
-
-            const iframe = document.getElementById('playerFrame');
-            if (iframe && iframe.contentWindow) {
-                try {
-                    const video = iframe.contentWindow.document.querySelector('video');
-                    if (video && video.src) {
-                        const a = document.createElement('a');
-                        a.href = video.src;
-                        a.download = 'video.mp4';
-                        document.body.appendChild(a);
-                        a.click();
-                        document.body.removeChild(a);
-                    } else {
-                        alert('Unable to find video source. The video might be protected or using a different format.');
-                    }
-                } catch (error) {
-                    console.error('Error accessing iframe content:', error);
-                    alert('Unable to access video source due to security restrictions.');
-                }
+        // Add theme toggle functionality
+        function toggleTheme() {
+            const body = document.body;
+            const icon = document.querySelector('.theme-toggle i');
+            
+            if (body.getAttribute('data-theme') === 'dark') {
+                body.removeAttribute('data-theme');
+                icon.className = 'fas fa-moon';
             } else {
-                alert('Video player not found. Please load a video first.');
+                body.setAttribute('data-theme', 'dark');
+                icon.className = 'fas fa-sun';
             }
         }
+
+        // Check user's preferred color scheme
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            document.body.setAttribute('data-theme', 'dark');
+            document.querySelector('.theme-toggle i').className = 'fas fa-sun';
+        }
+
+        
     </script>
 </body>
 </html>
