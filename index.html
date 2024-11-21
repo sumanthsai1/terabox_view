@@ -148,6 +148,41 @@
             background-color: #ff4081;
             transition: width 0.3s ease;
         }
+
+        .video-container {
+            position: relative;
+            width: 100%;
+            background: black;
+        }
+
+        .fullscreen-btn {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 8px 12px;
+            cursor: pointer;
+            z-index: 1000;
+            transition: background 0.3s ease;
+        }
+
+        .fullscreen-btn:hover {
+            background: rgba(0, 0, 0, 0.8);
+        }
+
+        /* Fullscreen styles */
+        .video-container:fullscreen {
+            width: 100vw;
+            height: 100vh;
+        }
+
+        .video-container:fullscreen iframe {
+            width: 100vw;
+            height: 100vh;
+        }
     </style>
     <!-- Add Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -167,7 +202,9 @@
 
         </div>
 
-        <div id="player"></div>
+        <div id="player">
+            <!-- Player content will be inserted here -->
+        </div>
     </div>
 
     <script>
@@ -176,13 +213,79 @@
             if (url) {
                 const playerUrl = `https://www.terabox.tech/play.html?url=${encodeURIComponent(url)}`;
                 document.getElementById('player').innerHTML = `
-                    <iframe id="playerFrame" src="${playerUrl}" width="100%" height="450" frameborder="0" allowfullscreen></iframe>
+                    <div class="video-container">
+                        <iframe id="playerFrame" 
+                            src="${playerUrl}" 
+                            width="100%" 
+                            height="450" 
+                            frameborder="0" 
+                            allowfullscreen="true"
+                            webkitallowfullscreen="true" 
+                            mozallowfullscreen="true"
+                            allow="fullscreen; accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture">
+                        </iframe>
+                        <button onclick="toggleFullScreen()" class="fullscreen-btn">
+                            <i class="fas fa-expand"></i>
+                        </button>
+                    </div>
                     <div id="downloadProgress">
                         <div id="downloadBar"></div>
                     </div>
                 `;
+
+                window.addEventListener('orientationchange', handleOrientation);
+                handleOrientation();
             } else {
                 alert('Please enter a valid URL');
+            }
+        }
+
+        function toggleFullScreen() {
+            const videoContainer = document.querySelector('.video-container');
+            const iframe = document.getElementById('playerFrame');
+
+            if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+                // Enter fullscreen
+                if (videoContainer.requestFullscreen) {
+                    videoContainer.requestFullscreen();
+                } else if (videoContainer.webkitRequestFullscreen) {
+                    videoContainer.webkitRequestFullscreen();
+                } else if (iframe.requestFullscreen) {
+                    iframe.requestFullscreen();
+                } else if (iframe.webkitRequestFullscreen) {
+                    iframe.webkitRequestFullscreen();
+                }
+            } else {
+                // Exit fullscreen
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                } else if (document.webkitExitFullscreen) {
+                    document.webkitExitFullscreen();
+                }
+            }
+        }
+
+        // Handle orientation changes for mobile devices
+        function handleOrientation() {
+            const iframe = document.getElementById('playerFrame');
+            if (!iframe) return;
+
+            if (window.matchMedia("(max-width: 768px)").matches) {
+                if (window.orientation === 90 || window.orientation === -90) {
+                    // Landscape mode
+                    iframe.style.position = 'fixed';
+                    iframe.style.top = '0';
+                    iframe.style.left = '0';
+                    iframe.style.width = '100vw';
+                    iframe.style.height = '100vh';
+                    iframe.style.zIndex = '9999';
+                } else {
+                    // Portrait mode
+                    iframe.style.position = 'relative';
+                    iframe.style.width = '100%';
+                    iframe.style.height = '450px';
+                    iframe.style.zIndex = '1';
+                }
             }
         }
 
