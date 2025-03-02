@@ -1,430 +1,140 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Terabox Video Player</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/video.js/8.5.2/video-js.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <title>Terabox Player</title>
     <style>
-        :root {
-            --primary-color: #4361ee;
-            --accent-color: #3a0ca3;
-            --text-color: #f8f9fa;
-            --bg-color: #121212;
-            --card-bg: #1e1e1e;
-            --input-bg: #2d2d2d;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            line-height: 1.6;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-height: 100vh;
-            padding: 20px;
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f0f0f0;
         }
 
         .container {
-            width: 100%;
-            max-width: 1000px;
+            max-width: 800px;
+            margin: 0 auto;
             padding: 20px;
-        }
-
-        .card {
-            background-color: var(--card-bg);
-            border-radius: 12px;
-            padding: 30px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-            margin-bottom: 30px;
-            transition: transform 0.3s ease;
-        }
-
-        .card:hover {
-            transform: translateY(-5px);
-        }
-
-        h1, h2 {
-            color: var(--text-color);
-            margin-bottom: 20px;
-            font-weight: 600;
-            text-align: center;
-        }
-
-        h1 {
-            font-size: 2.5rem;
-            margin-bottom: 30px;
-        }
-
-        h2 {
-            font-size: 1.8rem;
-        }
-
-        .form-group {
-            position: relative;
-            margin-bottom: 20px;
-        }
-
-        .input-group {
-            display: flex;
-            margin-bottom: 20px;
-        }
-
-        input {
-            flex: 1;
-            width: 100%;
-            padding: 15px 20px;
-            font-size: 1rem;
-            border: none;
-            background-color: var(--input-bg);
-            color: var(--text-color);
-            border-radius: 8px 0 0 8px;
-            transition: all 0.3s;
-        }
-
-        input:focus {
-            outline: none;
-            box-shadow: 0 0 0 2px var(--primary-color);
-        }
-
-        .btn {
-            display: inline-block;
-            padding: 15px 25px;
-            font-size: 1rem;
-            font-weight: 600;
-            text-align: center;
-            border: none;
+            background-color: #fff;
             border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        input[type="text"] {
+            width: 80%;
+            padding: 10px;
+            margin: 10px 0;
+            font-size: 1em;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 1em;
             cursor: pointer;
-            transition: all 0.3s ease;
-            background-color: var(--primary-color);
-            color: white;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            margin-top: 10px;
         }
 
-        .btn-search {
-            border-radius: 0 8px 8px 0;
-        }
-
-        .btn:hover {
-            background-color: var(--accent-color);
-            transform: translateY(-2px);
-        }
-
-        .btn:active {
-            transform: translateY(0);
-        }
-
-        .btn i {
-            margin-right: 8px;
-        }
-
-        #video-container {
-            display: none;
-            width: 100%;
-            margin-top: 30px;
-            transition: all 0.5s ease;
-        }
-
-        .video-wrapper {
-            position: relative;
-            width: 100%;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        button:hover {
+            background-color: #0056b3;
         }
 
         .video-js {
             width: 100%;
-            border-radius: 12px;
-        }
-
-        .loading {
-            display: none;
-            text-align: center;
-            margin: 20px 0;
-        }
-
-        .spinner {
-            display: inline-block;
-            width: 50px;
-            height: 50px;
-            border: 5px solid rgba(255, 255, 255, 0.1);
-            border-radius: 50%;
-            border-top-color: var(--primary-color);
-            animation: spin 1s ease-in-out infinite;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        .action-buttons {
-            display: flex;
-            gap: 15px;
             margin-top: 20px;
-            justify-content: center;
         }
 
-        .video-js .vjs-big-play-button {
-            background-color: var(--primary-color);
-            border-color: var(--primary-color);
-            border-radius: 50%;
-            height: 80px;
-            width: 80px;
-            line-height: 80px;
-            margin-left: -40px;
-            margin-top: -40px;
+        .details {
+            margin-top: 20px;
         }
 
-        .video-js:hover .vjs-big-play-button {
-            background-color: var(--accent-color);
+        .details img {
+            margin-top: 10px;
+            max-width: 100%;
+            border-radius: 8px;
         }
 
-        .footer {
-            margin-top: 40px;
-            font-size: 0.9rem;
-            color: #999;
-            text-align: center;
+        .details a {
+            display: block;
+            margin-top: 10px;
+            color: #007bff;
+            text-decoration: none;
         }
 
-        /* Add some responsive styling */
-        @media (max-width: 768px) {
-            .container {
-                padding: 10px;
-            }
-            
-            .card {
-                padding: 20px;
-            }
-            
-            h1 {
-                font-size: 2rem;
-            }
-            
-            input, .btn {
-                padding: 12px 15px;
-            }
-            
-            .action-buttons {
-                flex-direction: column;
-            }
+        .details a:hover {
+            text-decoration: underline;
         }
     </style>
+    <link href="https://unpkg.com/video.js@7/dist/video-js.min.css" rel="stylesheet" />
+
+    <!-- forest -->
+    <link href="https://unpkg.com/@videojs/themes@1/dist/forest/index.css" rel="stylesheet" />
 </head>
+
 <body>
     <div class="container">
-        <h1>Terabox Video Player</h1>
-        
-        <div class="card">
-            <h2>Enter Video Link</h2>
-            <div class="input-group">
-                <input type="text" id="video-url" placeholder="Paste Terabox URL here..." autocomplete="off">
-                <button class="btn btn-search" onclick="loadVideo()">
-                    <i class="fas fa-play"></i> Load
-                </button>
+        <h1>Terabox Player</h1>
+        <input type="text" id="urlInput" placeholder="Enter Terabox URL">
+        <button onclick="fetchVideoData()">Fetch Video</button>
+        <div id="videoDetails" style="display: none;">
+            <h2 id="videoTitle"></h2>
+            <div class="video">
+                <video id="my-video" class="video-js vjs-theme-forest" controls preload="auto" width="640" height="264"
+                    data-setup="{}">
+                    <source src="" type="video/mp4" />
+                    <p class="vjs-no-js">
+                        To view this video please enable JavaScript, and consider upgrading to a
+                        web browser that
+                        <a href="https://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a>
+                    </p>
+                </video>
             </div>
-            
-            <div class="loading" id="loading">
-                <div class="spinner"></div>
-                <p>Loading your video...</p>
+            <div class="details">
+                <a rel="noreferrer noopener" id="fastDownload" href="#" target="_blank">Fast Download</a>
+                <a rel="noreferrer noopener" id="hdDownload" href="#" target="_blank">HD Video</a>
+                <img id="videoThumbnail" src="" alt="Thumbnail">
             </div>
-        </div>
-        
-        <div id="video-container" class="card">
-            <div class="video-wrapper">
-                <video id="video-player" class="video-js vjs-big-play-centered vjs-theme-city" controls preload="auto"></video>
-            </div>
-            
-            <div class="action-buttons">
-                <a id="download-btn" href="#" target="_blank" download>
-                    <button class="btn">
-                        <i class="fas fa-download"></i> Download Video
-                    </button>
-                </a>
-
-
-            </div>
-        </div>
-        
-        <div class="footer">
-            <p>© 2025 Terabox Video Player | All rights reserved</p>
         </div>
     </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/video.js/8.5.2/video.min.js"></script>
+    <script src="https://vjs.zencdn.net/8.16.1/video.min.js"></script>
     <script>
-        let player;
-        
-        function extractTeraboxId(url) {
-            // Handle multiple URL formats
-            let matches;
-            
-            // Try to match standard format
-            matches = url.match(/[^\/]+$/);
-            if (matches && matches[0]) return matches[0];
-            
-            // Try to match URL with parameters
-            matches = url.match(/\/([^\/]+)(?:\?|$)/);
-            if (matches && matches[1]) return matches[1];
-            
-            return null;
+        async function fetchVideoData() {
+            const urlInput = document.getElementById('urlInput').value;
+            const videoDetails = document.getElementById('videoDetails');
+            const videoTitle = document.getElementById('videoTitle');
+            const videoThumbnail = document.getElementById('videoThumbnail');
+            const videoPlayer = videojs('my-video');
+            const fastDownload = document.getElementById('fastDownload');
+            const hdDownload = document.getElementById('hdDownload');
+
+            const id = urlInput.split("/").pop();
+
+            let response = await fetch(`https://wholly-api.skinnyrunner.com/get/website-data.php?get_html=https://www.terabox.tech/api/yttera?id=${id}`);
+            response = await response.text();
+            const data = JSON.parse(response);
+
+            const videoData = data.response[0];
+
+            videoTitle.innerText = videoData.title;
+            videoThumbnail.src = videoData.thumbnail;
+            fastDownload.href = videoData.resolutions["Fast Download"];
+            hdDownload.href = videoData.resolutions["HD Video"];
+
+            videoPlayer.src({ type: 'video/mp4', src: "https://apis.forn.fun/tera/data.php?id=" + id });
+            videoPlayer.poster(videoData.thumbnail);
+
+            videoDetails.style.display = "block";
         }
-        
-        function showLoading(show) {
-            document.getElementById("loading").style.display = show ? "block" : "none";
-        }
-        
-        function loadVideo() {
-            const teraboxUrl = document.getElementById("video-url").value.trim();
-            if (!teraboxUrl) {
-                showNotification("Please enter a valid Terabox URL", "error");
-                return;
-            }
-            
-            showLoading(true);
-            
-            const teraboxId = extractTeraboxId(teraboxUrl);
-            if (!teraboxId) {
-                showLoading(false);
-                showNotification("Could not extract valid ID from URL", "error");
-                return;
-            }
-            
-            const videoUrl = `https://mdisksetup.shraj.workers.dev/m3u8?id=${teraboxId}`;
-            
-            // Check if the URL is accessible
-            fetch(videoUrl)
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error(`Error: ${response.status}`);
-                    }
-                    return response;
-                })
-                .then(() => {
-                    initializePlayer(videoUrl);
-                })
-                .catch(error => {
-                    console.error("Error loading video:", error);
-                    showLoading(false);
-                    showNotification("Could not load video. Please check the URL and try again.", "error");
-                });
-        }
-        
-        function initializePlayer(videoUrl) {
-            document.getElementById("video-container").style.display = "block";
-            showLoading(false);
-            
-            // Destroy previous player instance if it exists
-            if (player) {
-                player.dispose();
-            }
-            
-            // Create new player
-            player = videojs('video-player', {
-                controls: true,
-                autoplay: false,
-                preload: 'auto',
-                responsive: true,
-                fluid: true,
-                playbackRates: [0.5, 1, 1.5, 2],
-                sources: [{
-                    src: videoUrl,
-                    type: 'application/x-mpegURL'
-                }]
-            });
-            
-            player.on('error', function() {
-                showNotification("Error playing video. Please try another URL.", "error");
-            });
-            
-            document.getElementById("download-btn").href = videoUrl;
-            
-            // Scroll to player
-            document.getElementById("video-container").scrollIntoView({
-                behavior: 'smooth'
-            });
-            
-            showNotification("Video loaded successfully!", "success");
-        }
-        
-        function resetPlayer() {
-            document.getElementById("video-url").value = "";
-            document.getElementById("video-container").style.display = "none";
-            if (player) {
-                player.dispose();
-                player = null;
-            }
-        }
-        
-        function copyVideoLink() {
-            const downloadLink = document.getElementById("download-btn").href;
-            if (downloadLink && downloadLink !== "#") {
-                navigator.clipboard.writeText(downloadLink)
-                    .then(() => {
-                        showNotification("Video link copied to clipboard!", "success");
-                    })
-                    .catch(err => {
-                        showNotification("Failed to copy link", "error");
-                        console.error('Failed to copy: ', err);
-                    });
-            } else {
-                showNotification("No video link available", "error");
-            }
-        }
-        
-        function showNotification(message, type = "info") {
-            // Create notification element if it doesn't exist
-            let notification = document.getElementById("notification");
-            if (!notification) {
-                notification = document.createElement("div");
-                notification.id = "notification";
-                notification.style.position = "fixed";
-                notification.style.bottom = "20px";
-                notification.style.right = "20px";
-                notification.style.padding = "15px 20px";
-                notification.style.borderRadius = "8px";
-                notification.style.boxShadow = "0 4px 12px rgba(0,0,0,0.15)";
-                notification.style.zIndex = "1000";
-                notification.style.transition = "all 0.3s ease";
-                notification.style.transform = "translateY(100px)";
-                document.body.appendChild(notification);
-            }
-            
-            // Set notification type
-            if (type === "error") {
-                notification.style.backgroundColor = "#d32f2f";
-            } else if (type === "success") {
-                notification.style.backgroundColor = "#43a047";
-            } else {
-                notification.style.backgroundColor = "#2196f3";
-            }
-            
-            notification.style.color = "white";
-            notification.textContent = message;
-            notification.style.transform = "translateY(0)";
-            
-            // Hide notification after 3 seconds
-            setTimeout(() => {
-                notification.style.transform = "translateY(100px)";
-            }, 3000);
-        }
-        
-        // Add ability to submit by pressing Enter key
-        document.getElementById("video-url").addEventListener("keypress", function(event) {
-            if (event.key === "Enter") {
-                event.preventDefault();
-                loadVideo();
-            }
-        });
     </script>
+    
 </body>
+
 </html>
