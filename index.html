@@ -3,313 +3,428 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TeraBox Player</title>
+    <title>Terabox Video Player</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/video.js/8.5.2/video-js.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
         :root {
-            --bg-color: #f0f2f5;
-            --container-bg: white;
-            --text-color: #333;
-            --input-border: #ccc;
-            --button-bg: #4CAF50;
-            --button-hover: #45a049;
-            --instructions-bg: #f8f8f8;
-            --instructions-border: #ddd;
+            --primary-color: #4361ee;
+            --accent-color: #3a0ca3;
+            --text-color: #f8f9fa;
+            --bg-color: #121212;
+            --card-bg: #1e1e1e;
+            --input-bg: #2d2d2d;
         }
 
-        [data-theme="dark"] {
-            --bg-color: #1a1a1a;
-            --container-bg: #2d2d2d;
-            --text-color: #ffffff;
-            --input-border: #444;
-            --button-bg: #2196F3;
-            --button-hover: #1976D2;
-            --instructions-bg: #363636;
-            --instructions-border: #444;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: var(--bg-color);
-            margin: 0;
-            padding: 20px;
+            color: var(--text-color);
+            line-height: 1.6;
             display: flex;
-            justify-content: center;
+            flex-direction: column;
             align-items: center;
             min-height: 100vh;
-            transition: all 0.3s ease;
+            padding: 20px;
         }
 
         .container {
-            background-color: var(--container-bg);
+            width: 100%;
+            max-width: 1000px;
+            padding: 20px;
+        }
+
+        .card {
+            background-color: var(--card-bg);
             border-radius: 12px;
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-            padding: 2.5rem;
-            width: 90%;
-            max-width: 800px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            margin-bottom: 30px;
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        h1, h2 {
+            color: var(--text-color);
+            margin-bottom: 20px;
+            font-weight: 600;
+            text-align: center;
         }
 
         h1 {
-            color: var(--text-color);
-            text-align: center;
-            margin-bottom: 2rem;
             font-size: 2.5rem;
+            margin-bottom: 30px;
+        }
+
+        h2 {
+            font-size: 1.8rem;
+        }
+
+        .form-group {
+            position: relative;
+            margin-bottom: 20px;
         }
 
         .input-group {
             display: flex;
-            margin-bottom: 2rem;
-            gap: 10px;
+            margin-bottom: 20px;
         }
 
-        input[type="text"] {
-            flex-grow: 1;
-            padding: 1rem;
-            border: 2px solid var(--input-border);
-            border-radius: 8px;
+        input {
+            flex: 1;
+            width: 100%;
+            padding: 15px 20px;
             font-size: 1rem;
-            background-color: var(--container-bg);
+            border: none;
+            background-color: var(--input-bg);
             color: var(--text-color);
-            transition: all 0.3s ease;
+            border-radius: 8px 0 0 8px;
+            transition: all 0.3s;
         }
 
-        input[type="text"]:focus {
+        input:focus {
             outline: none;
-            border-color: var(--button-bg);
-            box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.2);
+            box-shadow: 0 0 0 2px var(--primary-color);
         }
 
-        button {
-            padding: 1rem 2rem;
-            background-color: var(--button-bg);
-            color: white;
+        .btn {
+            display: inline-block;
+            padding: 15px 25px;
+            font-size: 1rem;
+            font-weight: 600;
+            text-align: center;
             border: none;
             border-radius: 8px;
             cursor: pointer;
-            font-size: 1rem;
-            font-weight: 600;
             transition: all 0.3s ease;
+            background-color: var(--primary-color);
+            color: white;
         }
 
-        button:hover {
-            background-color: var(--button-hover);
+        .btn-search {
+            border-radius: 0 8px 8px 0;
+        }
+
+        .btn:hover {
+            background-color: var(--accent-color);
             transform: translateY(-2px);
         }
 
-        #player {
-            margin-top: 2rem;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        .btn:active {
+            transform: translateY(0);
         }
 
-        /* Theme toggle button */
-        .theme-toggle {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            padding: 10px;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background-color: var(--container-bg);
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        .btn i {
+            margin-right: 8px;
         }
 
-        .theme-toggle i {
-            font-size: 1.2rem;
-            color: var(--text-color);
-        }
-
-        /* Add these new styles */
-        .download-btn {
-            background-color: #ff4081;
-        }
-        
-        .download-btn:hover {
-            background-color: #e91e63;
-        }
-
-        #downloadProgress {
-            margin-top: 1rem;
-            width: 100%;
-            height: 4px;
-            background-color: var(--input-border);
-            border-radius: 4px;
-            overflow: hidden;
+        #video-container {
             display: none;
+            width: 100%;
+            margin-top: 30px;
+            transition: all 0.5s ease;
         }
 
-        #downloadBar {
-            width: 0%;
-            height: 100%;
-            background-color: #ff4081;
-            transition: width 0.3s ease;
-        }
-
-        .video-container {
+        .video-wrapper {
             position: relative;
             width: 100%;
-            background: black;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
         }
 
-        .fullscreen-btn {
-            position: absolute;
-            bottom: 20px;
-            right: 20px;
-            background: rgba(0, 0, 0, 0.5);
-            color: white;
-            border: none;
-            border-radius: 5px;
-            padding: 8px 12px;
-            cursor: pointer;
-            z-index: 1000;
-            transition: background 0.3s ease;
+        .video-js {
+            width: 100%;
+            border-radius: 12px;
         }
 
-        .fullscreen-btn:hover {
-            background: rgba(0, 0, 0, 0.8);
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 20px 0;
         }
 
-        /* Fullscreen styles */
-        .video-container:fullscreen {
-            width: 100vw;
-            height: 100vh;
+        .spinner {
+            display: inline-block;
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            border-top-color: var(--primary-color);
+            animation: spin 1s ease-in-out infinite;
         }
 
-        .video-container:fullscreen iframe {
-            width: 100vw;
-            height: 100vh;
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+            justify-content: center;
+        }
+
+        .video-js .vjs-big-play-button {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            border-radius: 50%;
+            height: 80px;
+            width: 80px;
+            line-height: 80px;
+            margin-left: -40px;
+            margin-top: -40px;
+        }
+
+        .video-js:hover .vjs-big-play-button {
+            background-color: var(--accent-color);
+        }
+
+        .footer {
+            margin-top: 40px;
+            font-size: 0.9rem;
+            color: #999;
+            text-align: center;
+        }
+
+        /* Add some responsive styling */
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .card {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            input, .btn {
+                padding: 12px 15px;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
         }
     </style>
-    <!-- Add Font Awesome for icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
-    <button class="theme-toggle" onclick="toggleTheme()">
-        <i class="fas fa-moon"></i>
-    </button>
-
     <div class="container">
-        <h1>TeraBox Player</h1>
-        <div class="input-group">
-            <input type="text" id="urlInput" placeholder="Enter TeraBox URL here...">
-            <button onclick="loadPlayer()">
-                <i class="fas fa-play"></i> Load Player
-            </button>
-
+        <h1>Terabox Video Player</h1>
+        
+        <div class="card">
+            <h2>Enter Video Link</h2>
+            <div class="input-group">
+                <input type="text" id="video-url" placeholder="Paste Terabox URL here..." autocomplete="off">
+                <button class="btn btn-search" onclick="loadVideo()">
+                    <i class="fas fa-play"></i> Load
+                </button>
+            </div>
+            
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p>Loading your video...</p>
+            </div>
         </div>
+        
+        <div id="video-container" class="card">
+            <div class="video-wrapper">
+                <video id="video-player" class="video-js vjs-big-play-centered vjs-theme-city" controls preload="auto"></video>
+            </div>
+            
+            <div class="action-buttons">
+                <a id="download-btn" href="#" target="_blank" download>
+                    <button class="btn">
+                        <i class="fas fa-download"></i> Download Video
+                    </button>
+                </a>
 
-        <div id="player">
-            <!-- Player content will be inserted here -->
+
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>© 2025 Terabox Video Player | All rights reserved</p>
         </div>
     </div>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/video.js/8.5.2/video.min.js"></script>
     <script>
-        function loadPlayer() {
-            const url = document.getElementById('urlInput').value;
-            if (url) {
-                const playerUrl = `https://www.terabox.tech/play.html?url=${encodeURIComponent(url)}`;
-                document.getElementById('player').innerHTML = `
-                    <div class="video-container">
-                        <iframe id="playerFrame" 
-                            src="${playerUrl}" 
-                            width="100%" 
-                            height="450" 
-                            frameborder="0" 
-                            allowfullscreen="true"
-                            webkitallowfullscreen="true" 
-                            mozallowfullscreen="true"
-                            allow="fullscreen; accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture">
-                        </iframe>
-                        <button onclick="toggleFullScreen()" class="fullscreen-btn">
-                            <i class="fas fa-expand"></i>
-                        </button>
-                    </div>
-                    <div id="downloadProgress">
-                        <div id="downloadBar"></div>
-                    </div>
-                `;
-
-                window.addEventListener('orientationchange', handleOrientation);
-                handleOrientation();
-            } else {
-                alert('Please enter a valid URL');
-            }
-        }
-
-        function toggleFullScreen() {
-            const videoContainer = document.querySelector('.video-container');
-            const iframe = document.getElementById('playerFrame');
-
-            if (!document.fullscreenElement && !document.webkitFullscreenElement) {
-                // Enter fullscreen
-                if (videoContainer.requestFullscreen) {
-                    videoContainer.requestFullscreen();
-                } else if (videoContainer.webkitRequestFullscreen) {
-                    videoContainer.webkitRequestFullscreen();
-                } else if (iframe.requestFullscreen) {
-                    iframe.requestFullscreen();
-                } else if (iframe.webkitRequestFullscreen) {
-                    iframe.webkitRequestFullscreen();
-                }
-            } else {
-                // Exit fullscreen
-                if (document.exitFullscreen) {
-                    document.exitFullscreen();
-                } else if (document.webkitExitFullscreen) {
-                    document.webkitExitFullscreen();
-                }
-            }
-        }
-
-        // Handle orientation changes for mobile devices
-        function handleOrientation() {
-            const iframe = document.getElementById('playerFrame');
-            if (!iframe) return;
-
-            if (window.matchMedia("(max-width: 768px)").matches) {
-                if (window.orientation === 90 || window.orientation === -90) {
-                    // Landscape mode
-                    iframe.style.position = 'fixed';
-                    iframe.style.top = '0';
-                    iframe.style.left = '0';
-                    iframe.style.width = '100vw';
-                    iframe.style.height = '100vh';
-                    iframe.style.zIndex = '9999';
-                } else {
-                    // Portrait mode
-                    iframe.style.position = 'relative';
-                    iframe.style.width = '100%';
-                    iframe.style.height = '450px';
-                    iframe.style.zIndex = '1';
-                }
-            }
-        }
-
-        // Add theme toggle functionality
-        function toggleTheme() {
-            const body = document.body;
-            const icon = document.querySelector('.theme-toggle i');
-            
-            if (body.getAttribute('data-theme') === 'dark') {
-                body.removeAttribute('data-theme');
-                icon.className = 'fas fa-moon';
-            } else {
-                body.setAttribute('data-theme', 'dark');
-                icon.className = 'fas fa-sun';
-            }
-        }
-
-        // Check user's preferred color scheme
-        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-            document.body.setAttribute('data-theme', 'dark');
-            document.querySelector('.theme-toggle i').className = 'fas fa-sun';
-        }
-
+        let player;
         
+        function extractTeraboxId(url) {
+            // Handle multiple URL formats
+            let matches;
+            
+            // Try to match standard format
+            matches = url.match(/[^\/]+$/);
+            if (matches && matches[0]) return matches[0];
+            
+            // Try to match URL with parameters
+            matches = url.match(/\/([^\/]+)(?:\?|$)/);
+            if (matches && matches[1]) return matches[1];
+            
+            return null;
+        }
+        
+        function showLoading(show) {
+            document.getElementById("loading").style.display = show ? "block" : "none";
+        }
+        
+        function loadVideo() {
+            const teraboxUrl = document.getElementById("video-url").value.trim();
+            if (!teraboxUrl) {
+                showNotification("Please enter a valid Terabox URL", "error");
+                return;
+            }
+            
+            showLoading(true);
+            
+            const teraboxId = extractTeraboxId(teraboxUrl);
+            if (!teraboxId) {
+                showLoading(false);
+                showNotification("Could not extract valid ID from URL", "error");
+                return;
+            }
+            
+            const videoUrl = `https://mdisksetup.shraj.workers.dev/m3u8?id=${teraboxId}`;
+            
+            // Check if the URL is accessible
+            fetch(videoUrl)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`Error: ${response.status}`);
+                    }
+                    return response;
+                })
+                .then(() => {
+                    initializePlayer(videoUrl);
+                })
+                .catch(error => {
+                    console.error("Error loading video:", error);
+                    showLoading(false);
+                    showNotification("Could not load video. Please check the URL and try again.", "error");
+                });
+        }
+        
+        function initializePlayer(videoUrl) {
+            document.getElementById("video-container").style.display = "block";
+            showLoading(false);
+            
+            // Destroy previous player instance if it exists
+            if (player) {
+                player.dispose();
+            }
+            
+            // Create new player
+            player = videojs('video-player', {
+                controls: true,
+                autoplay: false,
+                preload: 'auto',
+                responsive: true,
+                fluid: true,
+                playbackRates: [0.5, 1, 1.5, 2],
+                sources: [{
+                    src: videoUrl,
+                    type: 'application/x-mpegURL'
+                }]
+            });
+            
+            player.on('error', function() {
+                showNotification("Error playing video. Please try another URL.", "error");
+            });
+            
+            document.getElementById("download-btn").href = videoUrl;
+            
+            // Scroll to player
+            document.getElementById("video-container").scrollIntoView({
+                behavior: 'smooth'
+            });
+            
+            showNotification("Video loaded successfully!", "success");
+        }
+        
+        function resetPlayer() {
+            document.getElementById("video-url").value = "";
+            document.getElementById("video-container").style.display = "none";
+            if (player) {
+                player.dispose();
+                player = null;
+            }
+        }
+        
+        function copyVideoLink() {
+            const downloadLink = document.getElementById("download-btn").href;
+            if (downloadLink && downloadLink !== "#") {
+                navigator.clipboard.writeText(downloadLink)
+                    .then(() => {
+                        showNotification("Video link copied to clipboard!", "success");
+                    })
+                    .catch(err => {
+                        showNotification("Failed to copy link", "error");
+                        console.error('Failed to copy: ', err);
+                    });
+            } else {
+                showNotification("No video link available", "error");
+            }
+        }
+        
+        function showNotification(message, type = "info") {
+            // Create notification element if it doesn't exist
+            let notification = document.getElementById("notification");
+            if (!notification) {
+                notification = document.createElement("div");
+                notification.id = "notification";
+                notification.style.position = "fixed";
+                notification.style.bottom = "20px";
+                notification.style.right = "20px";
+                notification.style.padding = "15px 20px";
+                notification.style.borderRadius = "8px";
+                notification.style.boxShadow = "0 4px 12px rgba(0,0,0,0.15)";
+                notification.style.zIndex = "1000";
+                notification.style.transition = "all 0.3s ease";
+                notification.style.transform = "translateY(100px)";
+                document.body.appendChild(notification);
+            }
+            
+            // Set notification type
+            if (type === "error") {
+                notification.style.backgroundColor = "#d32f2f";
+            } else if (type === "success") {
+                notification.style.backgroundColor = "#43a047";
+            } else {
+                notification.style.backgroundColor = "#2196f3";
+            }
+            
+            notification.style.color = "white";
+            notification.textContent = message;
+            notification.style.transform = "translateY(0)";
+            
+            // Hide notification after 3 seconds
+            setTimeout(() => {
+                notification.style.transform = "translateY(100px)";
+            }, 3000);
+        }
+        
+        // Add ability to submit by pressing Enter key
+        document.getElementById("video-url").addEventListener("keypress", function(event) {
+            if (event.key === "Enter") {
+                event.preventDefault();
+                loadVideo();
+            }
+        });
     </script>
 </body>
 </html>
